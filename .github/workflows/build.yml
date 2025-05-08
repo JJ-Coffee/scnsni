@@ -19,10 +19,7 @@ jobs:
       uses: addnab/docker-run-action@v3
       with:
         image: debian:bullseye
-        options: >-
-            --platform linux/arm64
-            -v ${{ github.workspace }}:/work
-            -w /work
+        options: --platform linux/arm64
         shell: bash
         run: |
           apt update && apt install -y \
@@ -38,6 +35,8 @@ jobs:
           nuitka --standalone --onefile --quiet main.py
 
           file dist/bugscan.bin
+        copy: |
+          . => .
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
