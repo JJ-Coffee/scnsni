@@ -1,9 +1,6 @@
 name: Build ARM64 Binary with Nuitka
 
 on:
-  push:
-    paths:
-      - '**.py'
   workflow_dispatch:
 
 jobs:
