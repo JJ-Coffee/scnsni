@@ -30,7 +30,7 @@ jobs:
             apt install -y gcc g++ patchelf make
             pip install nuitka
             mkdir -p dist
-            nuitka --onefile --output-dir=dist main.py
+            nuitka --onefile --output-dir=dist bugscan.py
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
