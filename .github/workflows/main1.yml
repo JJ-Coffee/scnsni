@@ -15,7 +15,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Checkout source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build in ARM64 container
         uses: addnab/docker-run-action@v3
@@ -30,7 +30,7 @@ jobs:
             nuitka --onefile --static-libpython=yes --output-dir=dist main.py
 
       - name: Upload binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: termux-binary
           path: dist/*.bin
