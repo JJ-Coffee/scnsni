@@ -21,9 +21,6 @@ jobs:
         image: debian:bullseye
         options: --platform linux/arm64 -v ${{ github.workspace }}:/workspace
         shell: bash
-        workdir: /src
-        copy: |
-          . => /src
         run: |
           cd /workspace
           apt update && apt install -y \
