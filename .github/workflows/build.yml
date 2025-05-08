@@ -1,0 +1,49 @@
+name: Build ARM64 Binary with Nuitka
+
+on:
+  push:
+    paths:
+      - '**.py'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Compile for Termux (ARM64)
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up QEMU & Docker for cross-compiling
+      uses: docker/setup-qemu-action@v3
+
+    - name: Build inside aarch64 container
+      uses: addnab/docker-run-action@v3
+      with:
+        image: debian:bullseye
+        options: --platform linux/arm64
+        shell: bash
+        run: |
+          apt update && apt install -y \
+            python3.12 python3.12-dev python3-pip \
+            build-essential patchelf ldd file curl \
+            wget git zlib1g-dev libffi-dev libssl-dev \
+            g++ gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
+
+          pip3 install --upgrade pip
+          pip3 install nuitka
+
+          # Optional: reduce size and warning
+          nuitka --standalone --onefile --quiet \
+            --output-dir=dist \
+            --remove-output \
+            bugscan.py
+
+          file dist/bugscan.bin
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: termux-arm64-binary
+        path: dist/bugscan.bin
