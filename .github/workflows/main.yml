@@ -1,0 +1,39 @@
+name: Build Python Binary for Termux (ARM64)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Cross-compile with Nuitka for ARM64
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up QEMU & Docker for ARM64
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build in ARM64 container
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/src \
+          --platform linux/arm64 \
+          nuitka/nuitka-python:latest-arm64 \
+          bash -c "
+            apt update && apt install -y patchelf ldd readelf ccache
+            cd /src
+            nuitka3 --standalone --onefile --enable-plugin=ssl main.py
+          "
+
+    - name: Upload Binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: termux-binary
+        path: main.bin
+        
