@@ -1,4 +1,4 @@
-name: Build Python with Nuitka for Termux1
+name: Cross Compile Python
 
 on:
   workflow_dispatch:
@@ -6,30 +6,31 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: arm64v8/python:3.12  # ARM64 cross-compile environment
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - name: Set up QEMU for ARM64
+        uses: docker/setup-qemu-action@v3
 
-      - name: Install dependencies
-        run: |
-          apt update
-          apt install -y gcc g++ patchelf make
-          pip install nuitka
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Compile Python file with Nuitka
-        run: |
-          mkdir -p dist
-          nuitka \
-            --onefile \
-            --static-libpython=yes \
-            --output-dir=dist \
-            main.py
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Build in ARM64 container
+        uses: addnab/docker-run-action@v3
+        with:
+          image: arm64v8/python:3.12
+          options: --platform linux/arm64
+          run: |
+            apt update
+            apt install -y gcc g++ patchelf make
+            pip install nuitka
+            mkdir -p dist
+            nuitka --onefile --static-libpython=yes --output-dir=dist main.py
 
       - name: Upload binary
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: termux-binary
           path: dist/*.bin
-          
