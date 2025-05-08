@@ -31,8 +31,8 @@ jobs:
             wget git zlib1g-dev libffi-dev libssl-dev \
             g++ gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
 
-          pip3 install --upgrade pip
-          pip3 install nuitka
+          pip install --upgrade pip
+          pip install nuitka
 
           # Optional: reduce size and warning
           nuitka --standalone --onefile --quiet \
