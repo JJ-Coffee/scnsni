@@ -19,7 +19,10 @@ jobs:
       uses: addnab/docker-run-action@v3
       with:
         image: debian:bullseye
-        options: --platform linux/arm64
+        options: >-
+            --platform linux/arm64
+            -v ${{ github.workspace }}:/work
+            -w /work
         shell: bash
         run: |
           apt update && apt install -y \
@@ -32,10 +35,7 @@ jobs:
           pip install nuitka
 
           # Optional: reduce size and warning
-          nuitka --standalone --onefile --quiet \
-            --output-dir=dist \
-            --remove-output \
-            bugscan.py
+          nuitka --standalone --onefile --quiet main.py
 
           file dist/bugscan.bin
 
