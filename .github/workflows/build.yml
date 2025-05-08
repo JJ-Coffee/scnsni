@@ -32,7 +32,7 @@ jobs:
           pip install nuitka
 
           # Optional: reduce size and warning
-          nuitka --standalone --onefile --quiet main.py
+          nuitka --standalone --onefile --quiet bugscan.py
 
           file dist/bugscan.bin
         copy: |
